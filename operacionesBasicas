@@ -1,0 +1,6 @@
+print ("Hola Mundo", 125+5)
+print (125+5)
+print (125*5)
+print (5**2)
+print (1/3)
+print (1/ float (3))
