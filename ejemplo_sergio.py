@@ -1,4 +1,4 @@
-print("hola mundo")
+print("hola tengo que leer")
 def bernoulli(n):
     if n == 0:
         return 1
