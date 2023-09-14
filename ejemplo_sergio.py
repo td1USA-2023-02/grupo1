@@ -25,6 +25,7 @@ def comb(n, k):
         return result
 
 n = int(input("Ingrese el valor de n: "))
+varBernoulli = bernoulli(n)
 print(f"El número de Bernoulli B({n}) es {bernoulli(n)}")
 
 
@@ -33,4 +34,12 @@ import math
 data = [1,2,3,4,5,6,7,8,9]
 for numero in data :
     resultados = math.sqrt(numero)
-    print(f"la raiz de {numero} es {resultados}")
+    
+    resultadoslista = [resultados]
+    
+    print (resultadoslista)
+    
+
+print(varBernoulli*data[0])
+
+    
