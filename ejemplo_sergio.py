@@ -40,6 +40,13 @@ for numero in data :
     print (resultadoslista)
     
 
-print(varBernoulli*data[0])
+a=(varBernoulli*data[0])
+
+for i in data :
+        mult=varBernoulli*i
+
+lista_resultados=[mult]
+
+print(lista_resultados)
 
     
