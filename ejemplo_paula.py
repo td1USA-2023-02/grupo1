@@ -19,3 +19,5 @@ import matplotlib.pyplot as plt
     plt.show()
 >>>>>>> ramasergio2
     
+
+    #hola pau que mensaje
