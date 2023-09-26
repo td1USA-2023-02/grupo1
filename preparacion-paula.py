@@ -131,3 +131,4 @@ plt.show()
 #Countplot
 sns.countplot(iris, x="target").set(title="Cantidad de flores por target")
 plt.show()
+
