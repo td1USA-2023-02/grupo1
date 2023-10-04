@@ -1,0 +1,37 @@
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import h3
+
+# Crear una lista de coordenadas que definen un polígono
+coordinates = [
+    (25.276987, 55.296249),
+    (25.276987, 55.321395),
+    (25.294126, 55.321395),
+    (25.294126, 55.296249),
+    (25.276987, 55.296249)
+]
+
+# Crear un polígono con las coordenadas
+polygon = gpd.GeoSeries([coordinates])
+polygon.crs = "EPSG:4326"  # Asignar el sistema de coordenadas
+
+# Dividir el polígono en hexágonos H3
+resolution = 8  # Puedes ajustar la resolución según tus necesidades
+h3_hexagons = h3.polyfill_geojson(polygon.__geo_interface__, resolution)
+
+# Crear un GeoDataFrame con los hexágonos H3
+h3_gdf = gpd.GeoDataFrame(geometry=[h3.h3_to_geo_boundary(h) for h in h3_hexagons])
+h3_gdf.crs = "EPSG:4326"  # Asignar el sistema de coordenadas
+
+# Guardar el GeoDataFrame en un archivo GeoPackage
+output_file = "hexagons.gpkg"
+h3_gdf.to_file(output_file, driver="GPKG")
+
+# Graficar los hexágonos H3
+h3_gdf.plot()
+plt.title("Hexágonos H3")
+plt.xlabel("Longitud")
+plt.ylabel("Latitud")
+plt.show()
+
+print(f"Los hexágonos H3 se han guardado en {output_file}")

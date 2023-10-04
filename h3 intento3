@@ -1,0 +1,78 @@
+import geopandas as gpd
+import pandas as pd
+import h3
+from shapely import wkt
+from shapely.geometry import Polygon, Point
+import shapely.wkt
+import matplotlib.pyplot as plt
+
+gpkg_path = "grupo1\gadm41_ARE.gpkg" 
+
+
+# Lee el archivo GeoPackage y crea un GeoDataFrame
+gdf = gpd.read_file(gpkg_path, layer='gadm41_ARE_2')
+
+# Ahora puedes trabajar con el GeoDataFrame
+print(gdf.head())
+'''
+# Layer selected after sampling on GeoPackage viewer
+#gdf = gpd.read_file(gpkg_path, layer='gadm41_ARE_2') 
+# Filter sectors (districts) closer to the coastline
+dubai_gdf = gdf[gdf['NAME_2'].isin(['Sector 1','Sector 2','Sector 3','Sector 4','Sector 5','Sector 6'])]
+# Essential columns
+dubai_gdf = dubai_gdf[['NAME_0','NAME_1','NAME_2','geometry']] 
+# Rename columns
+dubai_gdf.columns = ['Country','City','Sector','Geometry']
+dubai_gdf 
+
+
+h3_df = pd.DataFrame([],columns=['country','city','sector','h3_id','h3_geo_boundary','h3_centroid']) 
+# Iterate over every row of the geo dataframe
+for row in dubai_gdf.itertuples():  
+    # Parse out info from columns of row
+    country = row.Country
+    city = row.City
+    district_multipolygon = row.Geometry
+    district_sector = row.Sector
+    # Convert multi-polygon into list of polygons
+    district_polygon = list(district_multipolygon) 
+    for polygon in district_polygon:
+        # Convert Polygon to GeoJSON dictionary
+        poly_geojson = gpd.GeoSeries([polygon]).__geo_interface__
+        # Parse out geometry key from GeoJSON dictionary
+        poly_geojson = poly_geojson['features'][0]['geometry'] 
+        # Fill the dictionary with Resolution 10 H3 Hexagons
+        h3_hexes = h3.polyfill_geojson(poly_geojson, 10) 
+        for h3_hex in h3_hexes:
+            h3_geo_boundary = shapely.geometry.Polygon(
+                h3.h3_to_geo_boundary(h3_hex,geo_json=True)
+            )
+            h3_centroid = h3.h3_to_geo(h3_hex)
+            # Append results to dataframe
+            h3_df.loc[len(h3_df)]=[
+                country,
+                city,
+                district_sector,
+                h3_hex,
+                h3_geo_boundary,
+                h3_centroid
+            ]
+
+# Cargar el DataFrame h3_df como un GeoDataFrame
+h3_gdf = gpd.GeoDataFrame(h3_df, geometry='h3_geo_boundary')
+
+# Crear un mapa base
+world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+
+# Graficar los hexágonos H3 sobre el mapa base
+ax = world.plot(figsize=(12, 12), color='white', edgecolor='black')
+h3_gdf.plot(ax=ax, alpha=0.5)
+
+# Personalizar el título y etiquetas
+plt.title('Hexágonos H3 en Dubái')
+plt.xlabel('Longitud')
+plt.ylabel('Latitud')
+
+# Mostrar el gráfico
+plt.show()
+'''
