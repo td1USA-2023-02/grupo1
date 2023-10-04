@@ -1,0 +1,42 @@
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import shapely.geometry as sg
+import h3
+
+# Crear una lista de coordenadas que definen un polígono
+coordinates = [
+    (25.276987, 55.296249),
+    (25.276987, 55.321395),
+    (25.294126, 55.321395),
+    (25.294126, 55.296249),
+    (25.276987, 55.296249)
+]
+
+# Crear un polígono con las coordenadas
+polygon = sg.Polygon(coordinates)
+
+# Crear una GeoSeries con el polígono
+g = gpd.GeoSeries([polygon])
+
+# Establecer el sistema de coordenadas (CRS) si es necesario
+g.crs = "EPSG:4326"  # Este es el CRS de latitud y longitud
+
+# Dividir el polígono en hexágonos H3
+resolution = 8  # Resolución 8 para hexágonos más pequeños
+h3_hexagons = h3.polyfill_geojson(polygon.__geo_interface__, resolution)
+
+# Crear un GeoDataFrame con los hexágonos H3
+h3_gdf = gpd.GeoDataFrame(geometry=[sg.Polygon(h3.h3_to_geo_boundary(h)) for h in h3_hexagons])
+h3_gdf.crs = "EPSG:4326"  # Asignar el sistema de coordenadas
+
+# Graficar los hexágonos H3
+h3_gdf.plot()
+plt.title("Hexágonos H3")
+plt.xlabel("Longitud")
+plt.ylabel("Latitud")
+
+# Guardar la gráfica en un archivo JPG
+output_image = "hexagons.jpg"
+plt.savefig(output_image, format="jpg")
+
+print(f"Los hexágonos H3 se han guardado en {output_image}")
