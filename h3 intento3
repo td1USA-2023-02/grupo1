@@ -6,7 +6,7 @@ from shapely.geometry import Polygon, Point
 import shapely.wkt
 import matplotlib.pyplot as plt
 
-gpkg_path = "grupo1\gadm41_ARE.gpkg" 
+gpkg_path = "grupo1\gadm41_COL.gpkg" 
 
 
 # Lee el archivo GeoPackage y crea un GeoDataFrame
